@@ -1,66 +1,112 @@
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Site Grátis</title>
+    <title>Cardápio com Carrinho</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            background-color: #0f172a;
-            color: #f8fafc;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            background-color: #1e293b;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            max-width: 450px;
-            width: 100%;
-        }
-        h1 {
-            color: #38bdf8;
-            margin-bottom: 10px;
-            font-size: 2rem;
-        }
-        p {
-            color: #94a3b8;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-        .btn {
-            display: inline-block;
-            background-color: #38bdf8;
-            color: #0f172a;
-            padding: 12px 24px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: background 0.2s;
-        }
-        .btn:hover {
-            background-color: #0ea5e9;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+        body { background-color: #121214; color: #fff; padding: 20px; max-width: 500px; margin: 0 auto; padding-bottom: 100px; }
+        header { text-align: center; padding: 20px 0; border-bottom: 1px solid #29292e; }
+        h1 { color: #00b37e; }
+        .categoria { margin-top: 20px; }
+        .categoria h2 { color: #fba94c; font-size: 1.2rem; margin-bottom: 10px; }
+        .item { background: #202024; padding: 15px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .preco { color: #00b37e; font-weight: bold; margin-top: 5px; }
+        .btn-add { background: #00b37e; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-add:hover { background: #00875f; }
+        /* Barra do Carrinho Fixa Embaixo */
+        .barra-carrinho { position: fixed; bottom: 0; left: 0; right: 0; background: #202024; padding: 15px; display: flex; justify-content: space-between; align-items: center; max-width: 500px; margin: 0 auto; border-top: 2px solid #00b37e; box-shadow: 0 -5px 15px rgba(0,0,0,0.5); }
+        .btn-enviar { background: #fba94c; color: #121214; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; text-decoration: none; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Meu Novo Site</h1>
-        <p>Este site foi criado com sucesso e está hospedado de forma 100% gratuita usando o Cloudflare Pages e o GitHub!</p>
-        <a href="https://github.com" target="_blank" class="btn">Acessar Meu GitHub</a>
+    <header>
+        <h1>🍔 Meu Cardápio</h1>
+        <p>Adicione os itens e envie o pedido completo</p>
+    </header>
+
+    <!-- PRODUTOS -->
+    <div class="categoria">
+        <h2>Hambúrgueres</h2>
+        <div class="item">
+            <div>
+                <h4>X-Burger</h4>
+                <p class="preco">R$ 25,00</p>
+            </div>
+            <button class="btn-add" onclick="adicionar('X-Burger', 25.00)">+ Adicionar</button>
+        </div>
+        <div class="item">
+            <div>
+                <h4>X-Salada</h4>
+                <p class="preco">R$ 28,00</p>
+            </div>
+            <button class="btn-add" onclick="adicionar('X-Salada', 28.00)">+ Adicionar</button>
+        </div>
     </div>
+
+    <div class="categoria">
+        <h2>Bebidas</h2>
+        <div class="item">
+            <div>
+                <h4>Coca-Cola</h4>
+                <p class="preco">R$ 6,00</p>
+            </div>
+            <button class="btn-add" onclick="adicionar('Coca-Cola', 6.00)">+ Adicionar</button>
+        </div>
+    </div>
+
+    <!-- BARRA FIXA DO CARRINHO -->
+    <div class="barra-carrinho">
+        <div>
+            <p id="qtd-itens">Itens: 0</p>
+            <h3 id="total-pedido">Total: R$ 0,00</h3>
+        </div>
+        <button class="btn-enviar" onclick="enviarPedido()">Fechar Pedido 🛒</button>
+    </div>
+
+    <script>
+        let carrinho = {};
+        let total = 0;
+        let totalItens = 0;
+
+        // Digite seu Whatsapp com DDD aqui (Apenas números)
+        const SEU_WHATSAPP = "5500999999999"; 
+
+        function adicionar(nome, preco) {
+            if (carrinho[nome]) {
+                carrinho[nome].qtd += 1;
+            } else {
+                carrinho[nome] = { preco: preco, qtd: 1 };
+            }
+            total += preco;
+            totalItens += 1;
+            atualizarTela();
+        }
+
+        function atualizarTela() {
+            document.getElementById('qtd-itens').innerText = `Itens: ${totalItens}`;
+            document.getElementById('total-pedido').innerText = `Total: R$ ${total.toFixed(2).replace('.', ',')}`;
+        }
+
+        function enviarPedido() {
+            if (totalItens === 0) {
+                alert("Adicione pelo menos um item ao carrinho!");
+                return;
+            }
+
+            let mensagem = "*Novo Pedido Realizado:*\n\n";
+            for (let produto in carrinho) {
+                mensagem += `• ${carrinho[produto].qtd}x ${produto} - R$ ${(carrinho[produto].preco * carrinho[produto].qtd).toFixed(2)}\n`;
+            }
+            mensagem += `\n*Total a pagar:* R$ ${total.toFixed(2)}`;
+
+            // Abre o WhatsApp com o texto pronto
+            const url = `https://wa.me{SEU_WHATSAPP}?text=${encodeURIComponent(mensagem)}`;
+            window.open(url, '_blank');
+        }
+    </script>
 
 </body>
 </html>
